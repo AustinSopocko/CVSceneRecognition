@@ -46,3 +46,6 @@ We now have a dataset where every image is represented by a k-dimensional vector
 - **Prediction:**
     - When testing a new image, all 15 classifiers output a confidence score.
     - The class associated with the highest confidence score is selected as the final prediction.
+- **Training Accuracy:** We calculate the training accuracy.
+- **Optimising:** We compare this to the existing best training accuracy and/or re-run KMeans for a different k value (we test for k values in the range $[475,525]$) until all values in range have been tested.
+- **Output:** We retrieve the optimal k value and use this k value on the testing data provided. 
