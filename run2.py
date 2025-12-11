@@ -16,7 +16,7 @@ IMG_SUBSAMPLE = 200
 # n_init for KMeans
 KMEANS_RERUNS = 5
 # Range of K to test
-K_VALUES_TO_TEST = range(475, 530, 5) 
+K_VALUES_TO_TEST = range(475, 475, 5) 
 
 def extract_dense_patches(img_path):
     """
@@ -176,3 +176,46 @@ if __name__ == "__main__":
     print(f"Best k: {best_k}")
     print(f"Best accuracy:   {best_acc*100:.2f}%")
     print("================================================")
+
+
+    # =========================================================
+    # OPTIMAL K VALUE WAS 515
+    # =========================================================
+
+    TEST_PATH = './testing'
+    OUTPUT_FILE = 'run2.txt'
+    FINAL_K = 515 
+    
+    print(f"\nGenerating {OUTPUT_FILE} using k={FINAL_K}")
+
+    # Retrain the model on the specific K value 
+    final_kmeans = train_kmeans(patch_data, FINAL_K)
+    
+    # Generate features from images
+    X_train_final, y_train_final = load_dataset(TRAIN_PATH, final_kmeans)
+    
+    # Train linear ova classifiers
+    final_clf = LinearSVC(C=1.0, max_iter=2000, multi_class='ovr')
+    final_clf.fit(X_train_final, y_train_final)
+    
+    # Find testing images
+    test_files = glob(os.path.join(TEST_PATH, "*.jpg"))
+    
+    # Sort files numerically
+    try:
+        test_files.sort(key=lambda f: int(os.path.basename(f).split('.')[0]))
+    except ValueError:
+        # If files aren't numbers
+        test_files.sort()
+
+    with open(OUTPUT_FILE, 'w') as f:
+        for file_path in test_files:
+            # Generate histogram for test data
+            hist = get_image_histogram(file_path, final_kmeans)
+            
+            # Predict (reshape to 1, -1 because it's a single sample)
+            prediction = final_clf.predict([hist])[0]
+            
+            # Write to file
+            filename = os.path.basename(file_path)
+            f.write(f"{filename} {prediction}\n")
