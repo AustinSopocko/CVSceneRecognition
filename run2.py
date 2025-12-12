@@ -5,9 +5,7 @@ from glob import glob
 from sklearn.cluster import KMeans
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
-import time
 
-# Configuration
 PATCH_SIZE = 8
 STRIDE = 4
 TRAIN_PATH = './training'
@@ -16,7 +14,7 @@ IMG_SUBSAMPLE = 200
 # n_init for KMeans
 KMEANS_RERUNS = 5
 # Range of K to test
-K_VALUES_TO_TEST = range(475, 475, 5) 
+K_VALUES_TO_TEST = range(475, 525, 5) 
 
 def extract_dense_patches(img_path):
     """
